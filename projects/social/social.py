@@ -1,4 +1,4 @@
-
+import random
 
 class User:
     def __init__(self, name):
@@ -47,8 +47,21 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(0, numUsers):
+            self.addUser(f'Person{i}')
 
         # Create friendships
+        maybe_friends = []
+        for uID in self.users:
+            for fID in range(uID + 1, self.lastID + 1):
+                maybe_friends.append((uID, fID))
+
+        friendships = random.sample(
+            maybe_friends, ((numUsers * avgFriendships) // 2))
+
+        for frens in friendships:
+            self.addFriendship(frens[0], frens[1])
+
 
     def getAllSocialPaths(self, userID):
         """
@@ -61,6 +74,23 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        for user in self.users.keys():
+            if user is not userID:
+                seen = set()
+                stack = [[userID]]
+
+                while len(stack) > 0:
+                    path = stack.pop(0)
+                    current = path[-1]
+
+                    if current not in seen:
+                        if current == user:
+                            visited[user] = path
+
+                        seen.add(current)
+                        for friend in self.friendships[current]:
+                            stack.append(path + [friend])
+
         return visited
 
 
